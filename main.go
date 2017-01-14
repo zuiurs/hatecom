@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 	//	"github.com/k0kubun/pp"
-	"github.com/zuiurs/grawl/hatena"
-	"github.com/zuiurs/grawl/recommend"
+	"github.com/zuiurs/hatecom/hatena"
+	"github.com/zuiurs/hatecom/recommend"
 	"log"
 	"os"
 )
