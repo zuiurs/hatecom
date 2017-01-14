@@ -138,7 +138,7 @@ func (h Hatena) GetBookmarkListC(user string, limit int, cache map[string]*LiteE
 			}
 			list[index] = entry
 
-			fmt.Printf("%5d/%5d(%d): %s\n", index+1, limit, totalBookmarks, entry.Title)
+			fmt.Printf("%5d/%5d (%d): %s\n", index+1, limit, totalBookmarks, entry.Title)
 		}
 
 		// add category field
@@ -239,7 +239,7 @@ func (h Hatena) GetUserCategoryCount(user string, limit int) (*CategoryCounter, 
 		} else {
 			index = offset + 20
 		}
-		fmt.Printf("%5d/%5d(%d): Category counted\n", index, limit, totalBookmarks)
+		fmt.Printf("%5d/%5d (%d): Category counted\n", index, limit, totalBookmarks)
 	}
 
 	return &categoryCounter, nil
