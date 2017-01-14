@@ -1,8 +1,10 @@
+// glue code for hatena and recommend
+
 package recommend
 
 import (
 	"fmt"
-	"github.com/zuiurs/grawl/hatena"
+	"github.com/zuiurs/hatecom/hatena"
 )
 
 func StoreCC(user string, cc *hatena.CategoryCounter) {
