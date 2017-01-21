@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	//	"github.com/k0kubun/pp"
 	"github.com/zuiurs/hatecom/hatena"
 	"github.com/zuiurs/hatecom/recommend"
 	"log"
@@ -85,13 +84,7 @@ func main() {
 		}
 	}
 
-	// Code Generator
-	//recommend.OutputCategoryCode(uccs)
-
-	//------------transform category struct to recomend data type-------------------
-	//pp.Print(recommend.Critics)
-
-	// user と似ている人を順位付けして表示
+	// show ranking
 	// euclid
 	scoresEuclid := recommend.TopMatches(recommend.Critics, user, LimitTopUser, recommend.SimDistance)
 	fmt.Println("#### Similar User Ranking (Euclid Distance)####")
@@ -108,14 +101,14 @@ func main() {
 	}
 	fmt.Println()
 
-	// 自分のエントリを取得
+	// get my bookmark entry
 	fmt.Printf("---> %s Get Bookmark Entry\n", user)
 	bmlist, err := h.GetBookmarkList(user, LimitEntry)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
-	// for judging exist
+	// for checking existence
 	userEntryMap := make(map[string]bool)
 	for _, v := range bmlist {
 		userEntryMap[v.URL] = true
@@ -132,7 +125,7 @@ func main() {
 			os.Exit(1)
 		}
 		for _, e := range bl {
-			// どちらにも含まれていない且つ目的のカテゴリ
+			// not included user's entry and deprecated
 			if !(userEntryMap[e.URL] || selectedEntryMap[e.URL]) && e.Category == TargetCategory {
 				if e.Count > BorderBookmarkCount {
 					result = append(result, fmt.Sprintf("%s ( %s )", e.Title, e.URL))

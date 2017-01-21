@@ -45,15 +45,6 @@ func OutputCategoryCode(uccs []hatena.UserCateCounter) {
 	fmt.Printf("var Critics = map[string]map[string]float64{\n")
 	for _, ucc := range uccs {
 		fmt.Printf("\t\"%s\": map[string]float64{\n", ucc.User)
-		//fmt.Printf("\t\t\"general\": %f,\n", float64(c.CategoryCounter.General))
-		//fmt.Printf("\t\t\"social\": %f,\n", float64(c.CategoryCounter.Social))
-		//fmt.Printf("\t\t\"economics\": %f,\n", float64(c.CategoryCounter.Economics))
-		//fmt.Printf("\t\t\"life\": %f,\n", float64(c.CategoryCounter.Life))
-		//fmt.Printf("\t\t\"knowledge\": %f,\n", float64(c.CategoryCounter.Knowledge))
-		//fmt.Printf("\t\t\"it\": %f,\n", float64(c.CategoryCounter.It))
-		//fmt.Printf("\t\t\"fun\": %f,\n", float64(c.CategoryCounter.Fun))
-		//fmt.Printf("\t\t\"entertainment\": %f,\n", float64(c.CategoryCounter.Entertainment))
-		//fmt.Printf("\t\t\"game\": %f,\n", float64(c.CategoryCounter.Game))
 		if ucc.General != 0 {
 			fmt.Printf("\t\t\"general\": %f,\n", float64(ucc.General))
 		}

@@ -1,3 +1,5 @@
+// this code is refer to Programming Collective Intelligence (O'Reilly)
+
 package recommend
 
 import (
@@ -8,12 +10,12 @@ import (
 var Critics = make(map[string]map[string]float64)
 
 //------------------ p.11 ------------------
-// person1とperson2の距離を基にした類似性スコアを返す
-func SimDistance(prefs map[string]map[string]float64, person1, person2 string) float64 {
+// Euclid Score
+func SimDistance(prefs map[string]map[string]float64, p1, p2 string) float64 {
 	si := make(map[string]bool)
 
-	for k := range prefs[person1] {
-		if _, ok := prefs[person2][k]; ok {
+	for k := range prefs[p1] {
+		if _, ok := prefs[p2][k]; ok {
 			si[k] = true
 		}
 	}
@@ -24,12 +26,13 @@ func SimDistance(prefs map[string]map[string]float64, person1, person2 string) f
 
 	var sum_of_squares float64
 	for k := range si {
-		sum_of_squares += math.Pow(prefs[person1][k]-prefs[person2][k], 2.0)
+		sum_of_squares += math.Pow(prefs[p1][k]-prefs[p2][k], 2.0)
 	}
 
 	return 1 / (1 + sum_of_squares)
 }
 
+// Pearson Score
 func SimPearson(prefs map[string]map[string]float64, p1, p2 string) float64 {
 	si := make(map[string]bool)
 
@@ -49,15 +52,15 @@ func SimPearson(prefs map[string]map[string]float64, p1, p2 string) float64 {
 	var sum1Sq, sum2Sq float64
 	var pSum float64
 	for k := range si {
-		// すべての嗜好の合計
+		// total of each score
 		sum1 += prefs[p1][k]
 		sum2 += prefs[p2][k]
 
-		// 平方の合計
+		// total of square root
 		sum1Sq += math.Pow(prefs[p1][k], 2.0)
 		sum2Sq += math.Pow(prefs[p2][k], 2.0)
 
-		// 積の合計
+		// total of product
 		pSum += prefs[p1][k] * prefs[p2][k]
 	}
 
@@ -70,8 +73,6 @@ func SimPearson(prefs map[string]map[string]float64, p1, p2 string) float64 {
 	return num / den
 
 }
-
-//------------------------------------------
 
 //------------------ p.15 ------------------
 func TopMatches(prefs map[string]map[string]float64, person string, n int, similarity func(map[string]map[string]float64, string, string) float64) ScorePairList {
@@ -92,5 +93,3 @@ func TopMatches(prefs map[string]map[string]float64, person string, n int, simil
 
 	return scores[:n]
 }
-
-//------------------------------------------
