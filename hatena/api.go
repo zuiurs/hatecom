@@ -5,17 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
-)
-
-const (
-	// SleepTime is sleep time of GET request.
-	// The unit is 'second'.
-	SleepTime = 1
 )
 
 var (
@@ -32,6 +25,13 @@ var (
 
 	// localCache is a hashmap of URL and bookmark entry information
 	localCache = make(map[string]*LiteEntry)
+
+	// DebugMode is mode outputs log
+	DebugMode = true
+
+	// SleepTime is sleep time of GET request.
+	// The unit is 'second'.
+	SleepTime = 1
 )
 
 // Hatena includes user's information and etc.
@@ -109,7 +109,7 @@ func (h Hatena) GetBookmarkListC(user string, limit int, cache map[string]*LiteE
 		if offset == 0 {
 			var numberSubBytes [][]byte
 			if numberSubBytes = BMNumRegexp.FindSubmatch(be); numberSubBytes == nil {
-				fmt.Fprintln(os.Stderr, "*** Warning: Old user page detected ***")
+				Println("*** Warning: Old user page detected ***")
 				numberSubBytes = BMNumRegexpOld.FindSubmatch(be)
 			}
 
@@ -118,7 +118,7 @@ func (h Hatena) GetBookmarkListC(user string, limit int, cache map[string]*LiteE
 			if err != nil {
 				return nil, err
 			}
-			fmt.Printf("Total Bookmarks(%s): %d\n", user, totalBookmarks)
+			Printf("Total Bookmarks(%s): %d\n", user, totalBookmarks)
 
 			if totalBookmarks < limit { // align with limit
 				limit = totalBookmarks
@@ -138,7 +138,7 @@ func (h Hatena) GetBookmarkListC(user string, limit int, cache map[string]*LiteE
 			}
 			list[index] = entry
 
-			fmt.Printf("%5d/%5d (%d): %s\n", index+1, limit, totalBookmarks, entry.Title)
+			Printf("%5d/%5d (%d): %s\n", index+1, limit, totalBookmarks, entry.Title)
 		}
 
 		// add category field
@@ -147,10 +147,11 @@ func (h Hatena) GetBookmarkListC(user string, limit int, cache map[string]*LiteE
 			if i+1 == offset+20 {
 				break
 			}
+			if index > limit-1 {
+				break
+			}
 			list[index].Category = string(v[1])
-
 		}
-
 	}
 
 	return list, nil
@@ -190,7 +191,7 @@ func (h Hatena) GetUserCategoryCount(user string, limit int) (*CategoryCounter, 
 		if offset == 0 {
 			var numberSubBytes [][]byte
 			if numberSubBytes = BMNumRegexp.FindSubmatch(be); numberSubBytes == nil {
-				fmt.Fprintln(os.Stderr, "*** Warning: Old user page detected ***")
+				Println("*** Warning: Old user page detected ***")
 				numberSubBytes = BMNumRegexpOld.FindSubmatch(be)
 			}
 
@@ -199,7 +200,7 @@ func (h Hatena) GetUserCategoryCount(user string, limit int) (*CategoryCounter, 
 			if err != nil {
 				return nil, err
 			}
-			fmt.Printf("Total Bookmarks(%s): %d\n", user, totalBookmarks)
+			Printf("Total Bookmarks(%s): %d\n", user, totalBookmarks)
 
 			if limit < 0 {
 				limit = totalBookmarks
@@ -229,7 +230,7 @@ func (h Hatena) GetUserCategoryCount(user string, limit int) (*CategoryCounter, 
 			case "game":
 				categoryCounter.Game++
 			default:
-				fmt.Printf("Category %s is not found\n", v[1])
+				Printf("Category %s is not found\n", v[1])
 			}
 		}
 
@@ -239,7 +240,7 @@ func (h Hatena) GetUserCategoryCount(user string, limit int) (*CategoryCounter, 
 		} else {
 			index = offset + 20
 		}
-		fmt.Printf("%5d/%5d (%d): Category counted\n", index, limit, totalBookmarks)
+		Printf("%5d/%5d (%d): Category counted\n", index, limit, totalBookmarks)
 	}
 
 	return &categoryCounter, nil
@@ -285,7 +286,7 @@ func getPageBytes(url string) ([]byte, error) {
 	}
 
 	//-----------------------------------------------------
-	time.Sleep(SleepTime * time.Second)
+	time.Sleep(time.Duration(SleepTime) * time.Second)
 	//-----------------------------------------------------
 
 	return be, nil
@@ -301,4 +302,17 @@ func (c CategoryCounter) String() string {
 		fmt.Sprintf("Fun          : %d\n", c.Fun) +
 		fmt.Sprintf("Entertainment: %d\n", c.Entertainment) +
 		fmt.Sprintf("Game         : %d\n", c.Game)
+}
+
+func Printf(format string, a ...interface{}) (n int, err error) {
+	if DebugMode {
+		return fmt.Printf(format, a...)
+	}
+	return 0, nil
+}
+func Println(a ...interface{}) (n int, err error) {
+	if DebugMode {
+		return fmt.Println(a...)
+	}
+	return 0, nil
 }
